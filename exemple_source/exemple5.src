@@ -1,0 +1,15 @@
+indice = 2
+couleur1 = #ff0000
+couleur2 = rgb(0,255,0)
+
+!P 'Premier Paragraphe'
+!P 'Second Paragraphe'
+!P 'Troisième Paragraphe'
+
+bloc = !P[indice]
+bloc.couleurFond = couleur1
+
+style1 = [couleurFond : couleur2]
+
+bloc = !P[indice-1]
+bloc.style = style1

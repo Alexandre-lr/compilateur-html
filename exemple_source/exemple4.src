@@ -1,0 +1,8 @@
+@STYLE ( titre1 ) [
+  couleurTexte : rgb(100,255,100)
+  couleurFond : #000000
+]
+
+!T 'Premier Titre'
+!TT 'Premier sous-titre'
+!T 'Deuxième Titre'

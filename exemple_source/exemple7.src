@@ -1,0 +1,5 @@
+POUR i [0,255] +25 :
+  
+!T 'Titre ' i/25
+!T[i/25].couleurTexte = rgb(i,0,0)
+FINI

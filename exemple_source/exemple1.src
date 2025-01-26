@@ -1,0 +1,9 @@
+!T 'Ma super page'
+!TT 'Quelques paragraphes'
+!P 'Ceci est mon premier paragraphe court'
+!P 'Un paragraphe
+Un peu plus long
+sur trois lignes'
+!TT 'Une image pour le fun'
+!I 'rick.jpg'
+!TTT 'RickRoll'

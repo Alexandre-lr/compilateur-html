@@ -1,0 +1,15 @@
+!T 'Un titre'
+
+!T[0].couleurFond = #000000
+
+SI (!T[0].couleurFond == #000000) :
+!T[0].couleurTexte = #FF0000
+FINSI
+
+monTitre = !T[0]
+
+SI (monTitre.couleurTexte == rgb(255,0,0)):
+  monTitre.largeur=500px
+SINON:
+  monTitre.largeur=800px
+FINSI

@@ -1,0 +1,13 @@
+@DEFINE (encodage) {'ISO-8859-1'}
+%% Utilisation de l'encodage ISO-8859-1 pour faire apparaître des caractères erronés
+@DEFINE (icone) {'rick.ico'}
+%%% 
+Une
+Jolie
+Icone
+%%%
+@DEFINE (langue) {'fr'}
+@TITREPAGE 'rickroll 2'
+
+!T 'Un problème ?'
+%% Le caractère è ne doit pas apparaître correctement
