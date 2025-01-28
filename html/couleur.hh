@@ -13,7 +13,7 @@ public:
     Couleur(std::uint8_t const & r, std::uint8_t const & v, std::uint8_t const & b);
     Couleur(const std::string& couleurHex);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 private:
     std::uint8_t _r;
     std::uint8_t _v;

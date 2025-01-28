@@ -5,8 +5,9 @@ Propriete::Propriete(Propriete_t type, NoeudPtr valeur)
 
 }
 
-std::string Propriete::toHTML(const Contexte & contexte) const {
-    std::string valeur = _valeur->toHTML(contexte);
+std::string Propriete::to_html(const Contexte & contexte) const {
+    std::string valeur(_valeur->to_html(contexte));
+
     switch (_type) {
     case Propriete_t::encodage: return "\t\t<meta charset=\"" + valeur + "\">\n";
     case Propriete_t::icone: return "\t\t<link rel=\"icon\" type=\"image/jpg\" href=\"./" + valeur + "\"/>\n";

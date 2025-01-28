@@ -5,8 +5,9 @@ Attribut::Attribut(Attribut_t type, NoeudPtr valeur)
 
 }
 
-std::string Attribut::toHTML(const Contexte & contexte) const {
-    std::string valeur = _valeur->toHTML(contexte);
+std::string Attribut::to_html(const Contexte & contexte) const {
+    std::string valeur(_valeur->to_html(contexte));
+
     switch (_type) {
         case Attribut_t::largeur: return "width:" + valeur + ";";
         case Attribut_t::hauteur: return "height:" + valeur + ";";
@@ -19,4 +20,12 @@ std::string Attribut::toHTML(const Contexte & contexte) const {
 
 Attribut_t const & Attribut::type() const {
     return _type;
+}
+
+Attribut& Attribut::operator=(const Attribut & a) {
+    if (this != &a)
+        if (this->_type != a._type)
+            _valeur = a._valeur;
+
+    return *this;
 }

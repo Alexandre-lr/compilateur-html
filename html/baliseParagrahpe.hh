@@ -8,5 +8,5 @@ public:
     BaliseParagraphe(const BaliseParagraphe &) =default;
     BaliseParagraphe(NoeudPtr text, NoeudPtr style);
 
-    std::string nomBalise() const override;
+    std::string nom_balise() const override;
 };

@@ -5,6 +5,6 @@ BaliseParagraphe::BaliseParagraphe(NoeudPtr text, NoeudPtr style)
 
 }
 
-std::string BaliseParagraphe::nomBalise() const {
+std::string BaliseParagraphe::nom_balise() const {
     return "p";
 }

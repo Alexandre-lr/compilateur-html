@@ -8,9 +8,9 @@ public:
     Page(NoeudPtr corps, NoeudPtr entete);
     Page(const Page &) =default;
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-    void sauvegarde(const std::string & dest, const Contexte & contexte) const;
+    void sauvegarder(const std::string & dest, const Contexte & contexte) const;
 private:
     NoeudPtr _corps;
     NoeudPtr _entete;

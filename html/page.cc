@@ -6,10 +6,10 @@ Page::Page(NoeudPtr corps, NoeudPtr entete)
 
 }
 
-std::string Page::toHTML(const Contexte & contexte) const {
-    std::string corps = _corps->toHTML(contexte);
-    std::string entete = _entete->toHTML(contexte);
-    std::string page = "<!DOCTYPE html>\n";
+std::string Page::to_html(const Contexte & contexte) const {
+    std::string corps(_corps->to_html(contexte));
+    std::string entete(_entete->to_html(contexte));
+    std::string page("<!DOCTYPE html>\n");
     page += entete;
     page += corps;
     page += "</html>";
@@ -17,11 +17,11 @@ std::string Page::toHTML(const Contexte & contexte) const {
     return page;
 }
 
-void Page::sauvegarde(const std::string & dest, const Contexte & contexte) const {
+void Page::sauvegarder(const std::string & dest, const Contexte & contexte) const {
     std::ofstream fichier(dest);
 
     if (fichier.is_open()) {
-            fichier << this->toHTML(contexte);
+            fichier << this->to_html(contexte);
             fichier.close();
             std::cout << "Fichier sauvegardé avec succès : " << dest << std::endl;
         } else {

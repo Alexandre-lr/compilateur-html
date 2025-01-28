@@ -16,9 +16,9 @@ public:
     Attribut(const Attribut &) =default;
     Attribut(Attribut_t type, NoeudPtr valeur);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-    // Pour ajouterStyle de style.hh
+    Attribut& operator=(const Attribut & a);
     Attribut_t const & type() const;
 private:
     Attribut_t _type;

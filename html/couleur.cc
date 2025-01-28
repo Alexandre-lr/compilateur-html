@@ -11,11 +11,12 @@ Couleur::Couleur(const std::string & couleurHex) {
     _b = static_cast<std::uint8_t>(std::stoi(couleurHex.substr(5, 2), nullptr, 16));
 }
 
-std::string Couleur::toHTML(const Contexte & contexte) const {
+std::string Couleur::to_html(const Contexte & contexte) const {
     std::stringstream ss;
     ss << "#"
        << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(_r)
        << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(_v)
        << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(_b);
+
     return ss.str();
 }

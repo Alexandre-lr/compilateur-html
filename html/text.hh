@@ -8,7 +8,7 @@ public:
     Text(const Text &) =default;
     Text(std::string const & valeur);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 private:
     std::string _valeur;
 };

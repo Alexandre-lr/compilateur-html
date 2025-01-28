@@ -11,14 +11,15 @@ NoeudEnTete::NoeudEnTete()
 
 }
 
-std::string NoeudEnTete::toHTML(const Contexte & contexte) const {
-    std::string head = _proprietes.at(Propriete_t::langue)->toHTML(contexte);
+std::string NoeudEnTete::to_html(const Contexte & contexte) const {
+    std::string head(_proprietes.at(Propriete_t::langue)->to_html(contexte));
     head += "\t<head>\n";
     for (auto const & propriete : _proprietes)
         if (propriete.first != Propriete_t::langue)
-            head += propriete.second->toHTML(contexte);
-    head += "\t\t<title>" + _titre->toHTML(contexte) + "</title>\n";
+            head += propriete.second->to_html(contexte);
+    head += "\t\t<title>" + _titre->to_html(contexte) + "</title>\n";
     head += "\t</head>\n";
+
     return head;
 }
 
@@ -26,15 +27,14 @@ const NoeudPtr & NoeudEnTete::langue() const {
     return _proprietes.at(Propriete_t::langue);
 }
 
-void NoeudEnTete::ajouterPropriete(NoeudPtr propriete) {
-    auto p = std::dynamic_pointer_cast<Propriete>(propriete);
-    auto it = _proprietes.find(p->type());
-    if (it != _proprietes.end()) {
+void NoeudEnTete::modifier_propriete(NoeudPtr propriete) {
+    auto ptype(std::dynamic_pointer_cast<Propriete>(propriete)->type());
+
+    auto it(_proprietes.find(ptype));
+    if (it != _proprietes.end())
         it->second = propriete;
-    }
-    else {
-        _proprietes[p->type()] = propriete;
-    }
+    else
+        _proprietes[ptype] = propriete;
 }
 
 void NoeudEnTete::modifier_titre(NoeudPtr titre) {

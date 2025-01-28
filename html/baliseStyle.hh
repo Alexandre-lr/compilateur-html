@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "noeudElement.hh"
-#include "style.hh"
+#include "attribut.hh"
 
 class BaliseStyle : public NoeudElement
 {
@@ -11,9 +11,10 @@ public:
     BaliseStyle(const BaliseStyle &) =default;
     BaliseStyle(NoeudPtr contenu, NoeudPtr style);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-
+    NoeudPtr& style();
+    NoeudPtr& attribut(Attribut_t attribut);
 private:
     NoeudPtr _style;
 };

@@ -8,9 +8,11 @@ public:
     NoeudCorps() =default;
     NoeudCorps(const NoeudCorps &) =default;
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-    void ajouterElement(NoeudPtr element);
+    NoeudPtr& element(const std::size_t & idx, const std::string & balise);
+
+    void ajouter_element(NoeudPtr element);
 private:
     std::vector<NoeudPtr> _elements;
 };

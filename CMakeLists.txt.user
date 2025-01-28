@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.2, 2025-01-26T23:08:22. -->
+<!-- Written by QtCreator 9.0.2, 2025-01-28T00:25:52. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -169,9 +169,9 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">bison_expressions</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.bison_expressions</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">bison_expressions</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">html</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.html</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">html</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>

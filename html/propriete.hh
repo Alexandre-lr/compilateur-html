@@ -15,7 +15,7 @@ public:
     Propriete(const Propriete &) =default;
     Propriete(Propriete_t type, NoeudPtr valeur);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
     Propriete_t const & type() const;
 private:

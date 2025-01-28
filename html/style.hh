@@ -9,9 +9,10 @@ public:
     Style() : _attributs(std::map<Attribut_t, NoeudPtr>()) {}
     Style(const Style &) =default;
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-    void ajouterStyle(NoeudPtr attribut);
+    NoeudPtr& attribut(Attribut_t type);
+    Style& operator=(const Style & s);
 private:
     std::map<Attribut_t, NoeudPtr> _attributs;
 };

@@ -8,7 +8,7 @@ public:
     NoeudElement(const NoeudElement &) =default;
     NoeudElement(const NoeudPtr & contenu);
 
-    virtual std::string nomBalise() const =0;
+    virtual std::string nom_balise() const =0;
     NoeudPtr contenu() const;
 private:
     NoeudPtr _contenu;

@@ -11,7 +11,6 @@ public:
     Variable(const Variable &) = default;
     Variable(const std::string & nom);
     
-    std::string toHTML(const Contexte & contexte) const override;
 private:
     std::string _nom;
 };

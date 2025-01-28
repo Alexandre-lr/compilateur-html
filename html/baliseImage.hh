@@ -8,7 +8,7 @@ public:
     BaliseImage(const BaliseImage &) =default;
     BaliseImage(NoeudPtr src);
 
-    std::string toHTML(const Contexte & contexte) const override;
+    std::string to_html(const Contexte & contexte) const override;
 
-    std::string nomBalise() const override;
+    std::string nom_balise() const override;
 };

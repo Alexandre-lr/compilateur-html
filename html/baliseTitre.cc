@@ -5,6 +5,6 @@ BaliseTitre::BaliseTitre(NoeudPtr text, NoeudPtr style, const std::uint8_t & niv
 
 }
 
-std::string BaliseTitre::nomBalise() const {
+std::string BaliseTitre::nom_balise() const {
     return "h" + std::to_string(_niveau);
 }
