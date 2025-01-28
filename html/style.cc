@@ -25,3 +25,12 @@ Style& Style::operator=(const Style& s) {
     return *this;
 }
 
+void Style::modifier_attribut(NoeudPtr attribut) {
+    auto atype(std::dynamic_pointer_cast<Attribut>(attribut)->type());
+
+    auto it(_attributs.find(atype));
+    if (it != _attributs.end())
+        it->second = attribut;
+    else
+        _attributs[atype] = attribut;
+}

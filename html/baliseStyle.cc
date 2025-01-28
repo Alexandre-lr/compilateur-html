@@ -20,3 +20,7 @@ NoeudPtr& BaliseStyle::style() {
 NoeudPtr& BaliseStyle::attribut(Attribut_t attribut) {
     return std::dynamic_pointer_cast<Style>(_style)->attribut(attribut);
 }
+
+void BaliseStyle::modifier_attribut(NoeudPtr attribut) {
+    std::dynamic_pointer_cast<Style>(_style)->modifier_attribut(attribut);
+}
