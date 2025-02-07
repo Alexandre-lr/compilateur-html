@@ -23,56 +23,51 @@ using token = yy::Parser::token;
 %{
     yylval = lval;
 %}
-fin return token::END;
-
-"+" return '+';
-"*" return '*';
-"-" return '-';
-"<" return '<';
-">" return '>';
-"ou" return token::OU;
-"et" return token::ET;
-"/" return '/';
+"fin" return token::END;
+"'" return '\'';
 "(" return '(';
 ")" return ')';
-"==" {
-    return token::EGAL;
-}
-"!=" {
-    return token::DIFFERENT;
-}
-"=" return '=';
+"," return ',';
+"{" return '{';
+"}" return '}';
 
-[0-9]+(\.[0-9]+)?     {
-    yylval->build<double>(std::atof(YYText()));
-    return token::NUMBER;
-}
+"P" return token::PARAGRAPHE;
+"@DEFINE" return token::DEFINE;
+"!" return token::BLOC;
+"@TITREPAGE" return token::TITREPAGE;
 
-(?i:si) {
-    return token::SI;
+(?i:encodage) {
+    return token::ENCODAGE;
 }
 
-(?i:alors) {
-    return token::ALORS;
+(?i:icone) {
+    return token::ICONE;
 }
 
-(?i:sinon) {
-    return token::SINON;
+(?i:css) {
+    return token::CSS;
 }
 
+(?i:langue) {
+    return token::LANGUE;
+}
 
+T{1,9} {
+    yylval->build<std::uint8_t>(YYLeng());
+    return token::TITRE;
+}
 
 [a-z][a-zA-Z0-9]*    {
     yylval->build<std::string>(YYText());
-    return token::IDENT;
+    return token::TEXTE;
 }
 
-[ \t] {
-}
+[ \t] { }
 
-"\n"          {
+"\n" {
     loc->lines();
     return token::NL;
 }
+
 
 %%

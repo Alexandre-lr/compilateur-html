@@ -8,16 +8,13 @@
 class Driver {
 private:
     Contexte variables;       
-
 public:
     Driver();
     ~Driver();
-
      
-    const   Contexte& getContexte() const;
-    double  getVariable(const std::string& name) const;
-    void    setVariable(const std::string& name, double value);
-  
+    const Contexte& getContexte() const;
+    NoeudPtr&  getVariable(const std::string& name);
+    void setVariable(const std::string& name, NoeudPtr& value);
 };
 
 #endif

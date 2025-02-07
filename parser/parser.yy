@@ -12,13 +12,12 @@
     #include "page.hh"
     #include "noeudCorps.hh"
     #include "noeudEnTete.hh"
-    #include "contexte.hh"
-    #include "variable.hh"
+#include "variable.hh"
     #include "noeudElement.hh"
     #include "baliseStyle.hh"
     #include "baliseImage.hh"
     #include "baliseTitre.hh"
-    #include "baliseParagrahpe.hh"
+    #include "baliseParagraphe.hh"
     #include "baliseCommentaire.hh"
     #include "attribut.hh"
     #include "text.hh"
@@ -47,112 +46,79 @@
     #define yylex scanner.yylex
 }
 
-%token                  NL
-%token                  END
-%token                  SI
+%token NL
+%token END
+%token PARAGRAPHE
+%token BLOC DEFINE TITREPAGE
+%token <std::uint8_t> TITRE
+%token <std::string> TEXTE
+%token ENCODAGE ICONE CSS LANGUE
 
-%token                  ALORS
-%token                  SINON
-%token                  EGAL
-%token                  DIFFERENT
-%token <double>         NUMBER
-%token <std::string>    IDENT
-
-%type <ExpressionPtr>   expressionTernaire
-%type <ConditionPtr>    comparaison
-%type <ExpressionPtr>   operation
-%left OU
-%left ET
-%left '-' '+'
-%left '*' '/'
-%precedence  NEG
+%type <Propriete_t> propriete
+%type <NoeudPtr> noeud instruction html
 
 %%
+html:
+    instruction NL html {
 
-programme:
-    instruction NL programme
+    }
     | END NL {
         YYACCEPT;
     }
 
 instruction:
-    expression  {
+    BLOC noeud {
+        std::cout << $2->to_html(driver.getContexte());
     }
-    | affectation {
+    | DEFINE noeud {
+        std::cout << $2->to_html(driver.getContexte());
+
     }
-    | expressionTernaire {
-        double res = $1->calculer(driver.getContexte());
-        std::cout << "Le résultat de l'expression ternaire est : " << res << std::endl;
+    | TITREPAGE noeud {
+        std::cout << $2->to_html(driver.getContexte());
     }
 
-
-expressionTernaire:
-    SI '(' comparaison ')' ALORS operation SINON operation {
-        $$ = std::make_shared<ExpressionTernaire>($3,$6,$8);
-    }
-
-expression:
-    operation {
-        //Modifier cette partie pour prendre en compte la structure avec expressions
-        try{
-        std::cout << "#-> " << $1->calculer(driver.getContexte()) << std::endl;
-        } catch (const std::exception& err){
-            std::cerr << "#-> " << err.what() << std::endl;
-        }
-    }
-
-affectation:
-    IDENT '=' operation { 
-        double val = $3->calculer(driver.getContexte());
-        driver.setVariable($1,val);
-    }
-
-operation:
-    NUMBER {
-        $$ = std::make_shared<Constante>($1);
-    }
-    | IDENT {
-        $$ = std::make_shared<Variable>($1);
-    }
-    | '(' operation ')' {
+instruction:
+    BLOC noeud {
         $$ = $2;
     }
-    | operation '+' operation {
-        $$ = std::make_shared<ExpressionBinaire>($1,$3,OperateurBinaire::plus);
+    | DEFINE noeud {
+        $$ = $2;
     }
-    | operation '-' operation {
-        $$ = std::make_shared<ExpressionBinaire>($1,$3,OperateurBinaire::moins);
-    }
-    | operation '*' operation {
-        $$ = std::make_shared<ExpressionBinaire>($1,$3,OperateurBinaire::multiplie);
-    }
-    | operation '/' operation {
-        $$ = std::make_shared<ExpressionBinaire>($1,$3,OperateurBinaire::divise);
-    }
-    | '-' operation %prec NEG {
-        $$ = std::make_shared<ExpressionUnaire>($2,OperateurUnaire::neg);
+    | TITREPAGE noeud {
+        $$ = $2;
     }
 
-comparaison:
-    operation EGAL operation {
-        $$=std::make_shared<TestBinaire>($1,$3,OperateurBool::egal);
+noeud:
+    TEXTE {
+        $$ = std::make_shared<Text>($1);
     }
-    | operation DIFFERENT operation {
-        $$=std::make_shared<TestBinaire>($1,$3,OperateurBool::different);
+    | TITRE '\'' noeud '\'' {
+        $$ = std::make_shared<BaliseTitre>($3, std::make_shared<Style>(), $1);
     }
-    | operation '<' operation {
-        $$=std::make_shared<TestBinaire>($1,$3,OperateurBool::pluspetit);
+    | PARAGRAPHE '\'' noeud '\'' {
+        $$ = std::make_shared<BaliseParagraphe>($3, std::make_shared<Style>());
     }
-    | operation '>' operation {
-        $$=std::make_shared<TestBinaire>($1,$3,OperateurBool::plusgrand);
+    | '(' propriete ')' '{' '\'' noeud '\'' '}' {
+        $$ = std::make_shared<Propriete>($2, $6);
     }
-    | comparaison ET comparaison {
-        $$=std::make_shared<ConditionBinaire>($1,$3,OperateurBinaireBool::et);
+
+propriete:
+    ENCODAGE {
+        $$ = Propriete_t::encodage;
     }
-    | comparaison OU comparaison {
-        $$=std::make_shared<ConditionBinaire>($1,$3,OperateurBinaireBool::ou);
+    | ICONE {
+        $$ = Propriete_t::icone;
     }
-    
+    | CSS {
+        $$ = Propriete_t::css;
+    }
+    | LANGUE {
+        $$ = Propriete_t::langue;
+    }
+
+
+
 %%
 
 void yy::Parser::error( const location_type &l, const std::string & err_msg) {

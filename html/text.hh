@@ -9,6 +9,8 @@ public:
     Text(std::string const & valeur);
 
     std::string to_html(const Contexte & contexte) const override;
+
+    std::string& valeur();
 private:
     std::string _valeur;
 };

@@ -9,11 +9,11 @@ const Contexte& Driver::getContexte() const {
     return variables;
 }
 
-double Driver::getVariable(const std::string & name) const {
+NoeudPtr& Driver::getVariable(const std::string & name) {
     return variables.get(name);
 }
 
-void Driver::setVariable(const std::string & name, double value) {
+void Driver::setVariable(const std::string & name, NoeudPtr& value) {
     variables[name] = value;
 }
 

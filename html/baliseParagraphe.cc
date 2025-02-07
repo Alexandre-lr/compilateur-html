@@ -1,4 +1,4 @@
-#include "baliseParagrahpe.hh"
+#include "baliseParagraphe.hh"
 
 BaliseParagraphe::BaliseParagraphe(NoeudPtr text, NoeudPtr style)
     : BaliseStyle(text, style) {

@@ -1,14 +1,16 @@
 #include "couleur.hh"
+#include "text.hh"
 
 Couleur::Couleur(std::uint8_t const & r, std::uint8_t const & v, std::uint8_t const & b)
     : _r(r), _v(v), _b(b) {
 
 }
 
-Couleur::Couleur(const std::string & couleurHex) {
-    _r = static_cast<std::uint8_t>(std::stoi(couleurHex.substr(1, 2), nullptr, 16));
-    _v = static_cast<std::uint8_t>(std::stoi(couleurHex.substr(3, 2), nullptr, 16));
-    _b = static_cast<std::uint8_t>(std::stoi(couleurHex.substr(5, 2), nullptr, 16));
+Couleur::Couleur(NoeudPtr couleurHex) {
+    auto text(std::dynamic_pointer_cast<Text>(couleurHex)->valeur());
+    _r = static_cast<std::uint8_t>(std::stoi(text.substr(1, 2), nullptr, 16));
+    _v = static_cast<std::uint8_t>(std::stoi(text.substr(3, 2), nullptr, 16));
+    _b = static_cast<std::uint8_t>(std::stoi(text.substr(5, 2), nullptr, 16));
 }
 
 std::string Couleur::to_html(const Contexte & contexte) const {

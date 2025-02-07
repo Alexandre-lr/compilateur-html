@@ -7,7 +7,7 @@
 #include "style.hh"
 #include "baliseTitre.hh"
 #include "baliseImage.hh"
-#include "baliseParagrahpe.hh"
+#include "baliseParagraphe.hh"
 #include "baliseCommentaire.hh"
 #include "noeudCorps.hh"
 #include "noeudEnTete.hh"
@@ -71,7 +71,7 @@ int main() {
     // Exemple 5
 //    NoeudPtr constante1 = std::make_shared<Constante>(1);
 //    c1["indice"] = constante1;
-//    NoeudPtr couleur1 = std::make_shared<Couleur>("#ff0000");
+//    NoeudPtr couleur1 = std::make_shared<Couleur>(std::make_shared<Text>("#ff0000"));
 //    NoeudPtr attribut1 = std::make_shared<Attribut>(Attribut_t::couleurFond, couleur1);
 //    NoeudPtr couleur2 = std::make_shared<Couleur>(0, 255, 0);
 //    NoeudPtr attribut2 = std::make_shared<Attribut>(Attribut_t::couleurFond, couleur2);

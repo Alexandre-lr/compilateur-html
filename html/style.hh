@@ -6,7 +6,7 @@
 class Style : public Noeud
 {
 public:
-    Style() : _attributs(std::map<Attribut_t, NoeudPtr>()) {}
+    Style() {}
 //    Style(Attribut attribut) : _attributs(std::map<Attribut_t, NoeudPtr>()) {}
     Style(const Style &) =default;
 
@@ -18,5 +18,5 @@ public:
 
     void modifier_attribut(NoeudPtr attribut);
 private:
-    std::map<Attribut_t, NoeudPtr> _attributs;
+    std::map<Attribut_t, NoeudPtr> _attributs = std::map<Attribut_t, NoeudPtr>();
 };

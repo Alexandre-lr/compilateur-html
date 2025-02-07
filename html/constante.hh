@@ -6,11 +6,11 @@ class Constante : public Noeud
 public:
     Constante() =delete;
     Constante(const Constante &) =default;
-    Constante(double valeur);
+    Constante(int valeur);
 
     std::string to_html(const Contexte & contexte) const;
 
-    double valeur() const;
+    int valeur() const;
 private:
-    double _valeur;
+    int _valeur;
 };
