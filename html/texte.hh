@@ -1,16 +1,16 @@
 #pragma once
 #include "noeud.hh"
 
-class Text : public Noeud
+class Texte : public Noeud
 {
 public:
-    Text() =delete;
-    Text(const Text &) =default;
-    Text(std::string const & valeur);
+    Texte() =delete;
+    Texte(const Texte &) =default;
+    Texte(std::string const & valeur);
 
     std::string to_html(const Contexte & contexte) const override;
 
-    std::string& valeur();
+    std::string & valeur();
 private:
     std::string _valeur;
 };

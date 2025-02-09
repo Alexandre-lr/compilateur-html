@@ -6,7 +6,7 @@ class BaliseParagraphe : public BaliseStyle
 public:
     BaliseParagraphe() =delete;
     BaliseParagraphe(const BaliseParagraphe &) =default;
-    BaliseParagraphe(NoeudPtr text, NoeudPtr style);
+    BaliseParagraphe(NoeudPtr texte, NoeudPtr style);
 
-    std::string nom_balise() const override;
+    NoeudElement::Bloc_t type_balise() const override;
 };

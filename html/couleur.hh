@@ -10,7 +10,7 @@ class Couleur : public Noeud
 public:
     Couleur() =delete;
     Couleur(const Couleur &) =default;
-    Couleur(std::uint8_t const & r, std::uint8_t const & v, std::uint8_t const & b);
+    Couleur(NoeudPtr r, NoeudPtr v, NoeudPtr b);
     Couleur(NoeudPtr couleurHex);
 
     std::string to_html(const Contexte & contexte) const override;

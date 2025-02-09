@@ -6,9 +6,9 @@ BaliseImage::BaliseImage(NoeudPtr src)
 }
 
 std::string BaliseImage::to_html(const Contexte & contexte) const {
-    return "\t\t<" + nom_balise() + " src=" + contenu()->to_html(contexte) + "\">\n";
+    return "\t\t<" + tag() + " src=" + contenu()->to_html(contexte) + ">\n";
 }
 
-std::string BaliseImage::nom_balise() const {
-    return "img";
+NoeudElement::Bloc_t BaliseImage::type_balise() const {
+    return NoeudElement::Bloc_t::image;
 }

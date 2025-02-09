@@ -1,10 +1,10 @@
 #include "baliseParagraphe.hh"
 
-BaliseParagraphe::BaliseParagraphe(NoeudPtr text, NoeudPtr style)
-    : BaliseStyle(text, style) {
+BaliseParagraphe::BaliseParagraphe(NoeudPtr texte, NoeudPtr style)
+    : BaliseStyle(texte, style) {
 
 }
 
-std::string BaliseParagraphe::nom_balise() const {
-    return "p";
+NoeudElement::Bloc_t BaliseParagraphe::type_balise() const {
+    return NoeudElement::Bloc_t::paragraphe;
 }

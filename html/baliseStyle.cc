@@ -1,3 +1,4 @@
+#include <iostream>
 #include "baliseStyle.hh"
 #include "style.hh"
 
@@ -8,19 +9,24 @@ BaliseStyle::BaliseStyle(NoeudPtr contenu, NoeudPtr style)
 
 std::string BaliseStyle::to_html(const Contexte & contexte) const {
     std::string style(_style->to_html(contexte));
-    std::string text(contenu()->to_html(contexte));
+    std::string texte(contenu()->to_html(contexte));
 
-    return "\t\t<" + nom_balise() + style + ">" + text + "</" + nom_balise() + ">\n";
+    return "\t\t<" + tag() + style + ">" + texte + "</" + tag() + ">\n";
 }
 
 NoeudPtr& BaliseStyle::style() {
     return _style;
 }
 
-NoeudPtr& BaliseStyle::attribut(Attribut_t attribut) {
+NoeudPtr& BaliseStyle::attribut(Attribut::Attribut_t attribut) {
     return std::dynamic_pointer_cast<Style>(_style)->attribut(attribut);
 }
 
 void BaliseStyle::modifier_attribut(NoeudPtr attribut) {
-    std::dynamic_pointer_cast<Style>(_style)->modifier_attribut(attribut);
+    auto nouveauattribut(std::dynamic_pointer_cast<Attribut>(attribut));
+
+    if (nouveauattribut)
+        std::dynamic_pointer_cast<Style>(_style)->modifier_attribut(attribut);
+    else
+        throw std::invalid_argument("Type invalide : Noeud-Attribut attendu.");
 }

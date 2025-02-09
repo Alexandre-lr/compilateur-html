@@ -1,7 +1,7 @@
 #include "baliseCommentaire.hh"
 
-BaliseCommentaire::BaliseCommentaire(NoeudPtr text)
-    : NoeudElement(text) {
+BaliseCommentaire::BaliseCommentaire(NoeudPtr texte)
+    : NoeudElement(texte) {
 
 }
 
@@ -10,7 +10,6 @@ std::string BaliseCommentaire::to_html(const Contexte & contexte) const {
     return "<!--" + contenu()->to_html(contexte) + "-->\n";
 }
 
-// Seul balise sans nom
-std::string BaliseCommentaire::nom_balise() const {
-    return "";
+NoeudElement::Bloc_t BaliseCommentaire::type_balise() const {
+    return NoeudElement::Bloc_t::commentaire;
 }

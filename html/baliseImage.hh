@@ -10,5 +10,5 @@ public:
 
     std::string to_html(const Contexte & contexte) const override;
 
-    std::string nom_balise() const override;
+    NoeudElement::Bloc_t type_balise() const override;
 };

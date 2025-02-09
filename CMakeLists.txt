@@ -23,13 +23,11 @@ file(GLOB HTML_HEADERS
     html/contexte.hh
     html/couleur.hh
     html/noeud.hh
-    html/noeudCorps.hh
     html/noeudElement.hh
-    html/noeudEnTete.hh
     html/page.hh
     html/propriete.hh
     html/style.hh
-    html/text.hh
+    html/texte.hh
     html/variable.hh
 )
 
@@ -43,13 +41,11 @@ add_library(html
     html/constante.cc
     html/contexte.cc
     html/couleur.cc
-    html/noeudCorps.cc
     html/noeudElement.cc
-    html/noeudEnTete.cc
     html/page.cc
     html/propriete.cc
     html/style.cc
-    html/text.cc
+    html/texte.cc
     html/variable.cc
    ${HTML_HEADERS}
 )

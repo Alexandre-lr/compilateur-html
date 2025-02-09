@@ -18,14 +18,14 @@ std::string Attribut::to_html(const Contexte & contexte) const {
     }
 }
 
-Attribut_t const & Attribut::type() const {
-    return _type;
-}
-
 Attribut& Attribut::operator=(const Attribut & a) {
     if (this != &a)
         if (this->_type != a._type)
             _valeur = a._valeur;
 
     return *this;
+}
+
+Attribut::Attribut_t const & Attribut::type_attribut() const {
+    return _type;
 }

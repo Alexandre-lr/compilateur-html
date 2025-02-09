@@ -17,6 +17,6 @@ std::string Propriete::to_html(const Contexte & contexte) const {
     }
 }
 
-Propriete_t const & Propriete::type() const {
+Propriete::Propriete_t const & Propriete::type_propriete() const {
     return _type;
 }

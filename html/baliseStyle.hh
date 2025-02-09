@@ -15,7 +15,7 @@ public:
 
     // Déclaration d'opérateur personnalisé
     NoeudPtr& style();
-    NoeudPtr& attribut(Attribut_t attribut);
+    NoeudPtr& attribut(Attribut::Attribut_t attribut);
 
     // Modifie seulement l'attribut, ne le retourne pas
     void modifier_attribut(NoeudPtr attribut);

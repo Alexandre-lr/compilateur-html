@@ -23,51 +23,62 @@ using token = yy::Parser::token;
 %{
     yylval = lval;
 %}
-"fin" return token::END;
-"'" return '\'';
-"(" return '(';
-")" return ')';
-"," return ',';
-"{" return '{';
-"}" return '}';
 
-"P" return token::PARAGRAPHE;
-"@DEFINE" return token::DEFINE;
-"!" return token::BLOC;
-"@TITREPAGE" return token::TITREPAGE;
+"'"                return token::QUOTE;
+"("                return token::LPAREN;
+")"                return token::RPAREN;
+","                return token::COMMA;
+"{"                return token::LBRACE;
+"}"                return token::RBRACE;
+"["                return token::LBRACKET;
+"]"                return token::RBRACKET;
+"@"                return token::AT;
+"!"                return token::EXCLAMATION;
+":"                return token::COLON;
 
-(?i:encodage) {
-    return token::ENCODAGE;
-}
-
-(?i:icone) {
-    return token::ICONE;
-}
-
-(?i:css) {
-    return token::CSS;
-}
-
-(?i:langue) {
-    return token::LANGUE;
-}
-
-T{1,9} {
+T{1,9}             {
     yylval->build<std::uint8_t>(YYLeng());
     return token::TITRE;
 }
+"P"                return token::PARAGRAPHE;
+"I"                return token::IMAGE;
+"TITREPAGE"        return token::TITREPAGE;
+"DEFINE"           return token::DEFINE;
+"STYLE"           return token::STYLE;
+"%%"               return token::CLIGNE;
+"%%%"              return token::CMLIGNE;
 
-[a-z][a-zA-Z0-9]*    {
+(?i:encodage)      return token::ENCODAGE;
+(?i:icone)         return token::ICONE;
+(?i:css)           return token::CSS;
+(?i:langue)        return token::LANGUE;
+(?i:largeur)       return token::LARGEUR;
+(?i:hauteur)       return token::HAUTEUR;
+(?i:couleurfond)   return token::COULEURFOND;
+(?i:couleurtexte)  return token::COULEURTEXTE;
+(?i:opacite)       return token::OPACITE;
+(?i:rgb)           return token::RGB;
+
+#[a-zA-Z0-9]{6}    {
+    yylval->build<std::string>(YYText());
+    return token::HEX;
+}
+
+[0-9]+ {
+    yylval->build<int>(std::atoi(YYText()));
+    return token::CONSTANTE;
+}
+
+[a-zA-Z0-9-]*  {
     yylval->build<std::string>(YYText());
     return token::TEXTE;
 }
 
-[ \t] { }
+[ \t]              ; // Ignorer les espaces et tabulations
 
-"\n" {
+"\n"               {
     loc->lines();
     return token::NL;
 }
-
 
 %%
