@@ -17,12 +17,18 @@ std::string Page::to_html(const Contexte & contexte) const {
     entete += "\t\t<title>" + _titre->to_html(contexte) + "</title>\n";
     entete += "\t</head>\n";
 
-    std::string corps("\t<body>\n");
-    if (!_fini)
-        finaliser_html(contexte);
+    appliquer_styles();
 
-    for (auto const & element : _elements)
-        corps += element->to_html(contexte);
+    std::string corps("\t<body>\n");
+    if (!_commentaires.empty()) {
+        corps += "\t<!--\n";
+        for (auto const & commentaire : _commentaires)
+            corps += commentaire->to_html(contexte);
+        corps += "\t-->";
+    }
+
+    for (auto const & bloc : _blocs)
+        corps += bloc->to_html(contexte);
     corps += "\t</body>\n";
 
     std::string page("<!DOCTYPE html>\n");
@@ -45,16 +51,16 @@ void Page::sauvegarder(const std::string & dest, const Contexte & contexte) cons
         }
 }
 
-NoeudPtr& Page::element(NoeudPtr idx, NoeudElement::Bloc_t type) {
+NoeudPtr& Page::bloc(NoeudPtr idx, NoeudElement::Bloc_t type) {
     auto indice(std::dynamic_pointer_cast<Constante>(idx)->valeur());
 
     auto i(0);
-    for (auto & element : _elements) {
-        auto bloc(std::dynamic_pointer_cast<NoeudElement>(element));
+    for (auto & ibloc : _blocs) {
+        auto bloc(std::dynamic_pointer_cast<NoeudElement>(ibloc));
 
         if (bloc && (bloc->type_balise() == type)) {
             if (i == indice)
-                return element;
+                return ibloc;
             else
                 i++;
         }
@@ -62,14 +68,22 @@ NoeudPtr& Page::element(NoeudPtr idx, NoeudElement::Bloc_t type) {
     throw std::out_of_range("Selecteur invalide : élément introuvable pour l'indice " + std::to_string(indice) + " et le type donné.");
 }
 
-void Page::ajouter_element(NoeudPtr element) {
-    auto nouveauelement(std::dynamic_pointer_cast<NoeudElement>(element));
+void Page::ajouter_bloc(NoeudPtr bloc) {
+    auto nouveaubloc(std::dynamic_pointer_cast<NoeudElement>(bloc));
 
-    if (nouveauelement)
-        _elements.push_back(std::move(element));
+    if (nouveaubloc->type_balise() != NoeudElement::Bloc_t::commentaire)
+        _blocs.push_back(std::move(bloc));
     else
-        throw std::invalid_argument("Type invalide : Noeud-Element attendu.");
+        throw std::invalid_argument("Type invalide : Noeud-Bloc attendu.");
+}
 
+void Page::ajouter_commentaire(NoeudPtr commentaire)  {
+    auto nouveaucommentaire(std::dynamic_pointer_cast<BaliseCommentaire>(commentaire));
+
+    if (nouveaucommentaire)
+        _commentaires.push_back(std::move(commentaire));
+    else
+        throw std::invalid_argument("Type invalide : Noeud-Commentaire attendu.");
 }
 
 void Page::ajouter_style(NoeudPtr style) {
@@ -104,39 +118,16 @@ void Page::modifier_titre(NoeudPtr titre) {
         throw std::invalid_argument("Type invalide : Noeud-Texte attendu.");
 }
 
-void Page::regrouper_commentaires(const Contexte & contexte) const {
-    std::string commentairestexte;
-    bool contientcommentaire(false);
-
-    auto it = _elements.begin();
-    while (it != _elements.end()) {
-        auto commentaire(std::dynamic_pointer_cast<BaliseCommentaire>(*it));
-
-        if (commentaire) {
-            contientcommentaire = true;
-            commentairestexte += "\n" + commentaire->contenu()->to_html(contexte);
-
-            it = _elements.erase(it);
-        } else
-            ++it;
-    }
-
-    commentairestexte += "\n";
-
-    if (contientcommentaire)
-        _elements.insert(_elements.begin(), std::make_shared<BaliseCommentaire>(std::make_shared<Texte>(commentairestexte)));
-}
-
 void Page::appliquer_styles() const {
     auto stylepage = _styles.find(NoeudElement::Bloc_t::page);
     if (stylepage != _styles.end()) {
         NoeudPtr nouveaustyle = stylepage->second;
 
-        for (auto &element : _elements) {
-            auto elementstyle = std::dynamic_pointer_cast<BaliseStyle>(element);
+        for (auto &bloc : _blocs) {
+            auto blocstyle = std::dynamic_pointer_cast<BaliseStyle>(bloc);
 
-            if (elementstyle) {
-                elementstyle->style() = nouveaustyle;
+            if (blocstyle) {
+                blocstyle->style() = nouveaustyle;
             }
         }
     }
@@ -144,18 +135,12 @@ void Page::appliquer_styles() const {
         for (const auto &type : _styles) {
             NoeudPtr nouveaustyle = type.second;
 
-            for (auto &element : _elements) {
-                auto elementstyle = std::dynamic_pointer_cast<BaliseStyle>(element);
+            for (auto &bloc : _blocs) {
+                auto blocstyle = std::dynamic_pointer_cast<BaliseStyle>(bloc);
 
-                if (elementstyle && elementstyle->type_balise() == type.first) {
-                    elementstyle->style() = nouveaustyle;
+                if (blocstyle && blocstyle->type_balise() == type.first) {
+                    blocstyle->style() = nouveaustyle;
                 }
             }
         }
-}
-
-void Page::finaliser_html(const Contexte & contexte) const {
-    regrouper_commentaires(contexte);
-    appliquer_styles();
-    _fini = true;
 }

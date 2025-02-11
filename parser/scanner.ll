@@ -13,6 +13,20 @@ using token = yy::Parser::token;
 /* update location on matching */
 #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
 
+// Si sauts à true, les sauts de ligne sont sauvegardés
+std::string nettoieTexte(const std::string& texte, bool sauts) {
+    std::string result;
+    for (size_t i = 0; i < texte.length(); ++i) {
+        if (texte[i] == '\\' && i + 1 < texte.length()) {
+            result += texte[i + 1];
+            ++i;
+        } else if (sauts || texte[i] != '\n') {
+            result += texte[i];
+        }
+    }
+    return result;
+}
+
 %}
 
 %option c++
@@ -32,21 +46,32 @@ using token = yy::Parser::token;
 "}"                return token::RBRACE;
 "["                return token::LBRACKET;
 "]"                return token::RBRACKET;
-"@"                return token::AT;
-"!"                return token::EXCLAMATION;
 ":"                return token::COLON;
 
-T{1,9}             {
-    yylval->build<std::uint8_t>(YYLeng());
+!T{1,9}             {
+    yylval->build<std::uint8_t>(yyleng - 1);
     return token::TITRE;
 }
-"P"                return token::PARAGRAPHE;
-"I"                return token::IMAGE;
-"TITREPAGE"        return token::TITREPAGE;
-"DEFINE"           return token::DEFINE;
-"STYLE"           return token::STYLE;
-"%%"               return token::CLIGNE;
-"%%%"              return token::CMLIGNE;
+
+"!P"                return token::PARAGRAPHE;
+"!I"                return token::IMAGE;
+"@TITREPAGE"        return token::TITREPAGE;
+"@DEFINE"           return token::DEFINE;
+"@STYLE"           return token::STYLE;
+
+"%%((?:\\.|[^'\\])*)%%" {
+    std::string commentaireTexte = std::string(YYText() + 2, yyleng - 4);
+    std::string texteNettoye = nettoieTexte(commentaireTexte, false);
+    yylval->build<std::string>(texteNettoye);
+    return token::SIMPLECOMMENTAIRE;
+}
+
+"%%%((?:\\.|[^'\\])*)%%%" {
+    std::string commentaireTexte = std::string(YYText() + 3, yyleng - 6);
+    std::string texteNettoye = nettoieTexte(commentaireTexte, true);
+    yylval->build<std::string>(texteNettoye);
+    return token::MULTILIGNECOMMENTAIRE;
+}
 
 (?i:encodage)      return token::ENCODAGE;
 (?i:icone)         return token::ICONE;
@@ -69,8 +94,10 @@ T{1,9}             {
     return token::CONSTANTE;
 }
 
-[a-zA-Z0-9-]*  {
-    yylval->build<std::string>(YYText());
+'((?:\\.|[^'\\])*)' {
+    std::string texte = std::string(YYText() + 1, yyleng - 2);
+    std::string texteNettoye = nettoieTexte(texte, false);
+    yylval->build<std::string>(texteNettoye);
     return token::TEXTE;
 }
 

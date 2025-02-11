@@ -48,14 +48,14 @@
 %token PARAGRAPHE IMAGE TITREPAGE DEFINE STYLE CLIGNE CMLIGNE
 %token QUOTE LPAREN RPAREN COMMA LBRACE RBRACE LBRACKET RBRACKET AT EXCLAMATION COLON
 %token <std::uint8_t> TITRE
-%token <std::string> TEXTE HEX
+%token <std::string> TEXTE HEX SIMPLECOMMENTAIRE MULTILIGNECOMMENTAIRE
 %token <int> CONSTANTE
 %token ENCODAGE ICONE CSS LANGUE
 %token LARGEUR HAUTEUR COULEURTEXTE COULEURFOND OPACITE RGB
 
 %type <Propriete::Propriete_t> propriete
 %type <Attribut::Attribut_t> attribut
-%type <NoeudPtr> page noeud instruction bloc definition opt_style attribut_list attribut_def texte texte_multiligne
+%type <NoeudPtr> page noeud instruction bloc definition blocTernaire opt_style attribut_list attribut_def
 
 %left ','
 
@@ -64,6 +64,7 @@
 html:
     page {
         std::cout << $1->to_html(driver.getContexte());
+//        std::dynamic_pointer_cast<Page>($1)->sauvegarder("./final.html", driver.getContexte());
         YYACCEPT;
     }
 
@@ -76,8 +77,15 @@ page:
 
         auto page_ptr = std::static_pointer_cast<Page>($$);
 
-        if (std::dynamic_pointer_cast<NoeudElement>($1))
-            page_ptr->ajouter_element($1);
+        auto element = std::dynamic_pointer_cast<NoeudElement>($1);
+        if (element) {
+            if (element->type_balise() == NoeudElement::Bloc_t::commentaire)
+                page_ptr->ajouter_commentaire($1);
+            else
+                page_ptr->ajouter_bloc($1);
+        }
+        else if (std::dynamic_pointer_cast<Style>($1))
+            page_ptr->ajouter_style($1);
         else if (std::dynamic_pointer_cast<Propriete>($1))
             page_ptr->modifier_propriete($1);
         else
@@ -88,18 +96,21 @@ page:
     }
 
 instruction:
-    EXCLAMATION bloc {
-        $$ = $2;
+    bloc {
+        $$ = $1;
     }
-    | AT definition {
-        $$ = $2;
+    | definition {
+        $$ = $1;
     }
-    | CLIGNE texte {
-        $$ = std::make_shared<BaliseCommentaire>($2);
-    }
-    | CMLIGNE texte CMLIGNE {
-        $$ = std::make_shared<BaliseCommentaire>($2);
-    }
+//    | affectation {
+
+//    }
+//    | blocTernaire {
+//        $$ = $1
+//    }
+//    | blocBoucle {
+//        // TO DO
+//    }
 
 bloc:
     TITRE opt_style noeud {
@@ -110,6 +121,12 @@ bloc:
     }
     | IMAGE noeud {
         $$ = std::make_shared<BaliseImage>($2);
+    }
+    | SIMPLECOMMENTAIRE {
+        $$ = std::make_shared<BaliseCommentaire>(std::make_shared<Texte>($1));
+    }
+    | MULTILIGNECOMMENTAIRE {
+        $$ = std::make_shared<BaliseCommentaire>(std::make_shared<Texte>($1));
     }
 
 definition:
@@ -143,14 +160,6 @@ attribut_def:
         $$ = std::make_shared<Attribut>($1, $3);
     }
 
-texte:
-    TEXTE {
-        $$ = std::make_shared<Texte>($1);
-    }
-    | texte NL TEXTE {
-        $$ = std::make_shared<Texte>($1->to_html(driver.getContexte()) + "\n" + $3);
-    }
-
 noeud:
     CONSTANTE {
         $$ = std::make_shared<Constante>($1);
@@ -161,8 +170,8 @@ noeud:
     | HEX {
         $$ = std::make_shared<Couleur>(std::make_shared<Texte>($1));
     }
-    | QUOTE texte QUOTE {
-        $$ = $2;
+    | TEXTE {
+        $$ = std::make_shared<Couleur>(std::make_shared<Texte>($1));
     }
 
 propriete:
