@@ -19,12 +19,15 @@ std::string Page::to_html(const Contexte & contexte) const {
 
     appliquer_styles();
 
+    // Construction du parser à l'envers
+    std::reverse(_commentaires.begin(), _commentaires.end());
+    std::reverse(_blocs.begin(), _blocs.end());
     std::string corps("\t<body>\n");
     if (!_commentaires.empty()) {
-        corps += "\t<!--\n";
+        corps += "\t\t<!--\n";
         for (auto const & commentaire : _commentaires)
             corps += commentaire->to_html(contexte);
-        corps += "\t-->";
+        corps += "\t\t-->\n";
     }
 
     for (auto const & bloc : _blocs)
@@ -34,7 +37,7 @@ std::string Page::to_html(const Contexte & contexte) const {
     std::string page("<!DOCTYPE html>\n");
     page += entete;
     page += corps;
-    page += "</html>";
+    page += "</html>\n";
 
     return page;
 }

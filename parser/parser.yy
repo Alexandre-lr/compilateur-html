@@ -46,16 +46,16 @@
 
 %token NL
 %token PARAGRAPHE IMAGE TITREPAGE DEFINE STYLE CLIGNE CMLIGNE
-%token QUOTE LPAREN RPAREN COMMA LBRACE RBRACE LBRACKET RBRACKET AT EXCLAMATION COLON
+%token QUOTE LPAREN RPAREN COMMA LBRACE RBRACE LBRACKET RBRACKET AT EXCLAMATION COLON SIMPLECOMMENTAIRE MULTILIGNECOMMENTAIRE HASHTAG
 %token <std::uint8_t> TITRE
-%token <std::string> TEXTE HEX SIMPLECOMMENTAIRE MULTILIGNECOMMENTAIRE
+%token <std::string> TEXTE HEX
 %token <int> CONSTANTE
 %token ENCODAGE ICONE CSS LANGUE
 %token LARGEUR HAUTEUR COULEURTEXTE COULEURFOND OPACITE RGB
 
 %type <Propriete::Propriete_t> propriete
 %type <Attribut::Attribut_t> attribut
-%type <NoeudPtr> page noeud instruction bloc definition blocTernaire opt_style attribut_list attribut_def
+%type <NoeudPtr> page instruction bloc definition quotedtexte texte commentairesimple commentairemultiligne couleur constante /* blocTernaire style_bloc attribut_list attribut_def*/
 
 %left ','
 
@@ -64,7 +64,7 @@
 html:
     page {
         std::cout << $1->to_html(driver.getContexte());
-//        std::dynamic_pointer_cast<Page>($1)->sauvegarder("./final.html", driver.getContexte());
+        std::dynamic_pointer_cast<Page>($1)->sauvegarder("./final.html", driver.getContexte());
         YYACCEPT;
     }
 
@@ -91,88 +91,125 @@ page:
         else
             page_ptr->modifier_titre($1);
     }
-    | NL {
+    | instruction NL {
         $$ = std::make_shared<Page>();
+        auto page_ptr = std::static_pointer_cast<Page>($$);
+
+        auto element = std::dynamic_pointer_cast<NoeudElement>($1);
+        if (element) {
+            if (element->type_balise() == NoeudElement::Bloc_t::commentaire)
+                page_ptr->ajouter_commentaire($1);
+            else
+                page_ptr->ajouter_bloc($1);
+        }
+        else if (std::dynamic_pointer_cast<Style>($1))
+            page_ptr->ajouter_style($1);
+        else if (std::dynamic_pointer_cast<Propriete>($1))
+            page_ptr->modifier_propriete($1);
+        else
+            page_ptr->modifier_titre($1);
     }
 
 instruction:
-    bloc {
-        $$ = $1;
+    EXCLAMATION bloc {
+        $$ = $2;
     }
-    | definition {
-        $$ = $1;
+    | AT definition {
+        $$ = $2;
     }
-//    | affectation {
+    | SIMPLECOMMENTAIRE commentairesimple {
+        $$ = std::make_shared<BaliseCommentaire>($2);
+    }
+    | MULTILIGNECOMMENTAIRE NL commentairemultiligne NL MULTILIGNECOMMENTAIRE {
+        $$ = std::make_shared<BaliseCommentaire>($3);
+    }/*
+    | affectation {
 
-//    }
-//    | blocTernaire {
-//        $$ = $1
-//    }
-//    | blocBoucle {
-//        // TO DO
-//    }
+    }*/
 
 bloc:
-    TITRE opt_style noeud {
-        $$ = std::make_shared<BaliseTitre>($3, $2, $1);
+    TITRE quotedtexte {
+        $$ = std::make_shared<BaliseTitre>($2, std::make_shared<Style>(), $1);
     }
-    | PARAGRAPHE opt_style noeud {
-        $$ = std::make_shared<BaliseParagraphe>($3, $2);
+    | PARAGRAPHE quotedtexte {
+        $$ = std::make_shared<BaliseParagraphe>($2, std::make_shared<Style>());
     }
-    | IMAGE noeud {
+    | IMAGE quotedtexte {
         $$ = std::make_shared<BaliseImage>($2);
-    }
-    | SIMPLECOMMENTAIRE {
-        $$ = std::make_shared<BaliseCommentaire>(std::make_shared<Texte>($1));
-    }
-    | MULTILIGNECOMMENTAIRE {
-        $$ = std::make_shared<BaliseCommentaire>(std::make_shared<Texte>($1));
     }
 
 definition:
-    DEFINE LPAREN propriete RPAREN LBRACE noeud RBRACE {
-        $$ = std::make_shared<Propriete>($3, $6);
+    DEFINE propriete LBRACE quotedtexte RBRACE {
+        $$ = std::make_shared<Propriete>($2, $4);
     }
-    | TITREPAGE noeud {
+    | TITREPAGE quotedtexte {
+        $$ = $2;
+    }/*
+    | STYLE*/
+
+commentairesimple:
+    TEXTE {
+        $$ = std::make_shared<Texte>($1);
+    }
+
+commentairemultiligne:
+    TEXTE {
+        $$ = std::make_shared<Texte>($1);
+    }
+    | commentairemultiligne NL TEXTE {
+        $$ = std::make_shared<Texte>($1->to_html(driver.getContexte()) + "\n\t\t " + $3);
+    }
+
+quotedtexte:
+    QUOTE texte QUOTE {
         $$ = $2;
     }
 
-opt_style:
-    /* epsilon */ {
-        $$ = std::make_shared<Style>(); // Style par défaut
+texte:
+    TEXTE {
+        $$ = std::make_shared<Texte>($1);
     }
-    | LBRACKET attribut_list RBRACKET {
-        $$ = $2;
-    }
-
-attribut_list:
-    attribut_def {
-        $$ = std::make_shared<Style>();
-        std::static_pointer_cast<Style>($$)->modifier_attribut($1);
-    }
-    | attribut_list COMMA attribut_def {
-        std::static_pointer_cast<Style>($1)->modifier_attribut($3);
-        $$ = $1;
+    | texte NL TEXTE {
+        $$ = std::make_shared<Texte>($1->to_html(driver.getContexte()) + " " + $3);
     }
 
-attribut_def:
-    attribut COLON noeud {
-        $$ = std::make_shared<Attribut>($1, $3);
+couleur:
+    RGB LPAREN constante COMMA constante COMMA constante RPAREN {
+        //TO DO
+        // vérifier les valeur >0 et <255
+        $$ = std::make_shared<Couleur>($3, $5, $7);
+    }
+    | HASHTAG HEX {
+        $$ = std::make_shared<Couleur>(std::make_shared<Texte>($2));
     }
 
-noeud:
+constante:
     CONSTANTE {
         $$ = std::make_shared<Constante>($1);
     }
-    | RGB LPAREN noeud ',' noeud ',' noeud RPAREN {
-        $$ = std::make_shared<Couleur>($3, $5, $7);
-    }
-    | HEX {
-        $$ = std::make_shared<Couleur>(std::make_shared<Texte>($1));
-    }
-    | TEXTE {
-        $$ = std::make_shared<Couleur>(std::make_shared<Texte>($1));
-    }
+
+//style_bloc:
+//    /* epsilon */ {
+//        $$ = std::make_shared<Style>(); // Style par défaut
+//    }
+//    | LBRACKET attribut_list RBRACKET {
+//        $$ = $2;
+//    }
+
+//attribut_list_bloc:
+//    attribut_def {
+//        $$ = std::make_shared<Style>();
+//        std::static_pointer_cast<Style>($$)->modifier_attribut($1);
+//    }
+//    | attribut_list_bloc COMMA attribut_def {
+//        std::static_pointer_cast<Style>($1)->modifier_attribut($3);
+//        $$ = $1;
+//    }
+
+//attribut_def:
+//    attribut COLON noeud {
+//        $$ = std::make_shared<Attribut>($1, $3);
+//    }
 
 propriete:
     ENCODAGE {
@@ -188,22 +225,22 @@ propriete:
         $$ = Propriete::Propriete_t::langue;
     }
 
-attribut:
-    LARGEUR {
-        $$ = Attribut::Attribut_t::largeur;
-    }
-    | HAUTEUR {
-        $$ = Attribut::Attribut_t::hauteur;
-    }
-    | COULEURTEXTE {
-        $$ = Attribut::Attribut_t::couleurTexte;
-    }
-    | COULEURFOND {
-        $$ = Attribut::Attribut_t::couleurFond;
-    }
-    | OPACITE {
-        $$ = Attribut::Attribut_t::opacite;
-    }
+//attribut:
+//    LARGEUR {
+//        $$ = Attribut::Attribut_t::largeur;
+//    }
+//    | HAUTEUR {
+//        $$ = Attribut::Attribut_t::hauteur;
+//    }
+//    | COULEURTEXTE {
+//        $$ = Attribut::Attribut_t::couleurTexte;
+//    }
+//    | COULEURFOND {
+//        $$ = Attribut::Attribut_t::couleurFond;
+//    }
+//    | OPACITE {
+//        $$ = Attribut::Attribut_t::opacite;
+//    }
 
 %%
 

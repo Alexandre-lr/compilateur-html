@@ -7,7 +7,7 @@ BaliseCommentaire::BaliseCommentaire(NoeudPtr texte)
 
 std::string BaliseCommentaire::to_html(const Contexte & contexte) const {
     // Saute de ligne et tabulation faite dans la méthode regrouper_commentaires de la classe noeudCorps
-    return contenu()->to_html(contexte);
+    return "\t\t " + contenu()->to_html(contexte) + "\n";
 }
 
 NoeudElement::Bloc_t BaliseCommentaire::type_balise() const {

@@ -3,9 +3,9 @@
 #include "constante.hh"
 
 Couleur::Couleur(NoeudPtr r, NoeudPtr v, NoeudPtr b)
-    : _r(std::dynamic_pointer_cast<Constante>(r)->valeur()), _v(std::dynamic_pointer_cast<Constante>(v)->valeur()), _b(std::dynamic_pointer_cast<Constante>(b)->valeur()) {
-
-}
+    : _r(std::dynamic_pointer_cast<Constante>(r)->valeur())
+    , _v(std::dynamic_pointer_cast<Constante>(v)->valeur())
+    , _b(std::dynamic_pointer_cast<Constante>(b)->valeur()) {}
 
 Couleur::Couleur(NoeudPtr couleurHex) {
     auto couleur(std::dynamic_pointer_cast<Texte>(couleurHex)->valeur());

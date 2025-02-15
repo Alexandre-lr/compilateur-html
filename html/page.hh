@@ -29,7 +29,7 @@ private:
     void appliquer_styles() const;
 private:
     std::map<Propriete::Propriete_t, NoeudPtr> _proprietes = std::map<Propriete::Propriete_t, NoeudPtr>({
-        {Propriete::Propriete_t::langue,   std::make_shared<Propriete>(Propriete::Propriete_t::langue,   std::make_shared<Texte>("fr"))},
+        {Propriete::Propriete_t::langue, std::make_shared<Propriete>(Propriete::Propriete_t::langue, std::make_shared<Texte>("fr"))},
         {Propriete::Propriete_t::encodage, std::make_shared<Propriete>(Propriete::Propriete_t::encodage, std::make_shared<Texte>("utf-8"))}
     });
     NoeudPtr _titre = std::make_shared<Texte>("");
